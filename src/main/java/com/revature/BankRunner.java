@@ -4,7 +4,7 @@ package com.revature;
  * Hello world!
  *
  */
-public class App 
+public class BankRunner
 {
     public static void main( String[] args )
     {
