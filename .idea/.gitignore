@@ -2,6 +2,12 @@
 /shelf/
 /workspace.xml
 
+/compiler.xml
+/encodings.xml
+/jarRepositories.xml
+/misc.xml
+/vcs.xml
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
