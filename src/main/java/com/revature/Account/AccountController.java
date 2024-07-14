@@ -1,13 +1,24 @@
 package com.revature.Account;
 
-import com.revature.util.interfaces.*;
+import com.revature.util.interfaces.Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
 import java.util.List;
+import java.util.function.Predicate;
 
-public class AccountController extends Controller {
+public class AccountController implements Controller {
+
+    private final AccountService accountService;
+
+    // Constructors - Dependency Injection - any dependent objects are provided at initialization
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    // No idea what this is for
+    // private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
 
     @Override
     public void registerPaths(Javalin app) {

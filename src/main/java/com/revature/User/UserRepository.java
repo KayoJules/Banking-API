@@ -33,8 +33,6 @@ public class UserRepository {
 
 
 
-
-
     public User findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
