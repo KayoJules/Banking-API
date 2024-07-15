@@ -10,6 +10,7 @@ public class AuthController {
         this.authService = authService;
     }
 
+    // TODO: Replace scanners with Javalin
     public void register(Scanner scanner) {
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
