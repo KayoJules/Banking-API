@@ -24,7 +24,7 @@ public class AccountRepository implements Crudable<Account> {
 
     @Override
     public List<Account> findAll() {
-        return List.of();
+        return null;
     }
 
     @Override

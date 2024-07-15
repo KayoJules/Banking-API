@@ -14,12 +14,10 @@ public class AuthService {
     }
 
     public User[] findAll() {
-        // Implement findAll method if needed
         return new User[0];
     }
 
     public User findById(int userId) {
-        // Implement findById method if needed
         return null;
     }
 

@@ -37,6 +37,21 @@ public class AccountService implements Serviceable<Account> {
         return null;
     }
 
+    public void update(Account updatedAccount) {
+
+        for (int i = 0; i < accountList.size(); i++) {
+            if (accountList.get(i).getAccountId() == updatedAccount.getAccountId()) {
+                accountList.set(i, updatedAccount);
+                return;
+            }
+        }
+        throw new DataNotFoundException("Account with ID provided not within database");
+    }
+
+
+
+
+
 }
 
 
