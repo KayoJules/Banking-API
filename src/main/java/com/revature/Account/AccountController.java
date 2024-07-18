@@ -1,12 +1,12 @@
 package com.revature.Account;
 
+import com.revature.util.exceptions.InvalidInputException;
 import com.revature.util.interfaces.Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class AccountController implements Controller {
 
@@ -22,9 +22,25 @@ public class AccountController implements Controller {
 
     @Override
     public void registerPaths(Javalin app) {
+        app.get("/flights/{accountNumber}", this::getAccountById);
         app.get("/accounts", this::getAllAccounts);
         app.post("/accounts", this::postNewAccount);
-        app.get("/flights/{accountNumber}", this::getAccountById);
+        app.put("/accounts", this::putUpdateAccount);
+    }
+
+    private void putUpdateAccount(Context ctx) {
+        Account updatedAccount = ctx.bodyAsClass(Account.class);
+
+        try {
+            if (accountService.update(updatedAccount)) {
+                ctx.status(HttpStatus.ACCEPTED);
+
+            } else {
+                ctx.status(HttpStatus.BAD_REQUEST);
+            }
+        } catch (InvalidInputException e) {
+            e.printStackTrace();
+        }
     }
 
     public void getAccountById(Context ctx) {
@@ -39,7 +55,7 @@ public class AccountController implements Controller {
     }
 
     public void postNewAccount(Context ctx) {
-        Account account  =  ctx.bodyAsClass(Account.class);
+        Account account = ctx.bodyAsClass(Account.class);
         ctx.json(accountService.create(account));
         ctx.status(HttpStatus.CREATED);
     }

@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountService implements Serviceable<Account> {
-    private List<Account> accountList = new ArrayList<>();
     private final AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
-
 
     @Override
     public List<Account> findAll() {
@@ -21,33 +19,22 @@ public class AccountService implements Serviceable<Account> {
 
     @Override
     public Account create(Account newAccount) {
-        accountList.add(newAccount);
-        return newAccount;
+        return accountRepository.create(newAccount);
     }
 
     @Override
     public Account findById(int accountId) {
-
-
-        for (Account account : accountList) {
-            if (account.getAccountId() == accountId) {
-                return account;
-            }
-        }
-        return null;
+        return accountRepository.findById(accountId);
     }
 
-    public void update(Account updatedAccount) {
-
-        for (int i = 0; i < accountList.size(); i++) {
-            if (accountList.get(i).getAccountId() == updatedAccount.getAccountId()) {
-                accountList.set(i, updatedAccount);
-                return;
-            }
-        }
-        throw new DataNotFoundException("Account with ID provided not within database");
+    public boolean update(Account updatedAccount) {
+        return accountRepository.update(updatedAccount);
     }
 
+
+    public boolean delete(Account removedAccount) {
+        return accountRepository.delete(removedAccount);
+    }
 
 
 

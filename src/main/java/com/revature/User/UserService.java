@@ -20,35 +20,25 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User create(User newUser) {
-        userList.add(newUser);
-        return newUser;
+        return userRepository.create(newUser);
+    }
+
+    public boolean delete(User removedUser) {
+        return userRepository.delete(removedUser);
     }
 
     @Override
     public User findById(int userId) {
-
-        for (User user : userList) {
-            if (user.getUserId() == userId) {
-                return user;
-            }
-        }
-        return null;
+        return userRepository.findById(userId);
     }
 
     public User findByUsername(String username){
         return userRepository.findByUsername(username);
     }
 
-    public void update(User updatedUser) {
-
-        for (int i = 0; i < userList.size(); i++) {
-            if (userList.get(i).getUserId() == updatedUser.getUserId()) {
-                userList.set(i, updatedUser);
-                return;
-            }
-        }
-        throw new DataNotFoundException("User with ID provided not within database");
-    }
+    public boolean update(User updatedUser) {
+        return userRepository.update(updatedUser);
+}
 
 
 
