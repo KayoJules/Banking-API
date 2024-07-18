@@ -54,9 +54,11 @@ public class AccountController implements Controller {
         ctx.json(accounts);
     }
 
+    // TODO: Review
     public void postNewAccount(Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
         ctx.json(accountService.create(account));
         ctx.status(HttpStatus.CREATED);
     }
+
 }

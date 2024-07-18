@@ -11,11 +11,30 @@ import java.util.List;
 
 public class AccountRepository implements Crudable<Account> {
 
-    // TODO
     @Override
     public boolean update(Account updatedAccount) {
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "UPDATE accounts SET user_id = ?, account_type = ?, balance = ? WHERE account_id = ? ";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
-        return false;
+            preparedStatement.setInt(1, updatedAccount.getUserId());
+            // TODO: MIGHT CAUSE ERROR; UPPERCASE MAYBE?
+            preparedStatement.setString(2, updatedAccount.getAccountTypeAsString());
+            preparedStatement.setBigDecimal(3, updatedAccount.getBalance());
+            preparedStatement.setInt(4, updatedAccount.getAccountId());
+
+            int checkInsert = preparedStatement.executeUpdate();
+
+            if (checkInsert == 0) {
+                throw new DataNotFoundException("Account ID " + updatedAccount.getAccountId() + " does not exist. Please double check.");
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -93,7 +112,7 @@ public class AccountRepository implements Crudable<Account> {
     @Override
     public Account findById(int accountId) {
         try(Connection conn = ConnectionFactory.getConnectionFactory().getConnection()){
-            String sql = "select * from accounts where accountId = ?";
+            String sql = "select * from accounts where account_id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
             preparedStatement.setInt(1, accountId);
@@ -106,8 +125,12 @@ public class AccountRepository implements Crudable<Account> {
 
             Account account = new Account();
 
-            // TODO: Review me; copy pasta
             account.setAccountId(resultSet.getInt("account_id"));
+            account.setUserId(resultSet.getInt("user_id"));
+
+            // TODO: THIS MIGHT CAUSE AN ERROR
+            account.setAccountType(resultSet.getString("account_type"));
+            account.setBalance(resultSet.getBigDecimal("balance"));
 
             return account;
 

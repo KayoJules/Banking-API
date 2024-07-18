@@ -1,37 +1,21 @@
 package com.revature.util.auth;
 
-import com.revature.Account.*;
 import com.revature.User.*;
-import com.revature.util.auth.*;
-import com.revature.util.exceptions.*;
+
+import javax.security.sasl.AuthenticationException;
 
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthService(UserService userService) {
+        this.userService = userService;
     }
 
-    public User[] findAll() {
-        return new User[0];
-    }
-
-    public User findById(int userId) {
-        return null;
-    }
-
-    public void registerUser(String username, String password) throws InvalidInputException {
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setPassword(password);
-        userRepository.save(newUser);
-    }
-
-    public boolean loginUser(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        // TODO: Check password
-        return true;
+    public User login(String username, String password) throws AuthenticationException {
+        User user = userService.findByUsernameAndPassword(username, password);
+        if (user == null) throw new AuthenticationException("Invalid user credentials. Please try again.");
+        return user;
     }
 }
 

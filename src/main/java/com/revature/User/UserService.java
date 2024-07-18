@@ -1,12 +1,9 @@
 package com.revature.User;
-import com.revature.util.exceptions.DataNotFoundException;
 import com.revature.util.interfaces.Serviceable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserService implements Serviceable<User> {
-    private List<User> userList = new ArrayList<>();
     private final UserRepository userRepository;
 
     public UserService(UserRepository userList) {
@@ -32,8 +29,8 @@ public class UserService implements Serviceable<User> {
         return userRepository.findById(userId);
     }
 
-    public User findByUsername(String username){
-        return userRepository.findByUsername(username);
+    public User findByUsernameAndPassword(String username, String password){
+        return userRepository.findByUsernameAndPassword(username, password);
     }
 
     public boolean update(User updatedUser) {

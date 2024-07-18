@@ -2,6 +2,7 @@ package com.revature.User;
 
 import java.sql.*;
 
+import com.revature.Account.Account;
 import com.revature.util.ConnectionFactory;
 import com.revature.util.exceptions.*;
 import com.revature.util.interfaces.Crudable;
@@ -34,20 +35,43 @@ public class UserRepository implements Crudable<User> {
         }
     }
 
-    // TODO
     @Override
     public User findById(int userId) {
+        try(Connection conn = ConnectionFactory.getConnectionFactory().getConnection()){
+            String sql = "select * from users where user_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
+            preparedStatement.setInt(1, userId);
 
-        return null;
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(!resultSet.next()){
+                throw new DataNotFoundException("No user with that information found");
+            }
+
+            User user = new User();
+
+            user.setUserId(resultSet.getInt("user_id"));
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            user.setFirstName(resultSet.getString("first_name"));
+            user.setLastName(resultSet.getString("last_name"));
+
+            return user;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+    public User findByUsernameAndPassword(String username, String password) {
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
 
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 User user = new User();
@@ -86,11 +110,30 @@ public class UserRepository implements Crudable<User> {
         return user;
     }
 
-    // TODO
     @Override
     public boolean update(User updatedUser) {
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ? WHERE user_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
-        return false;
+            preparedStatement.setString(1, updatedUser.getFirstName());
+            preparedStatement.setString(2, updatedUser.getLastName());
+            preparedStatement.setString(3, updatedUser.getUsername());
+            preparedStatement.setString(4, updatedUser.getPassword());
+            preparedStatement.setInt(5, updatedUser.getUserId());
+
+            int checkInsert = preparedStatement.executeUpdate();
+
+            if (checkInsert == 0) {
+                throw new DataNotFoundException("User ID " + updatedUser.getUserId() + " does not exist. Please double check.");
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
