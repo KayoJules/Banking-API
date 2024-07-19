@@ -1,18 +1,36 @@
 package com.revature.User;
+import com.revature.Account.Account;
+import com.revature.util.exceptions.DataNotFoundException;
 import com.revature.util.interfaces.Serviceable;
+import java.util.function.Predicate;
 
 import java.util.List;
 
 public class UserService implements Serviceable<User> {
+    private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userList) {
-        this.userRepository = userList;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public List<User> findAll() {
-        return null;
+        List<User> users = userRepository.findAll();
+        if (users == null || users.isEmpty()) {
+            throw new DataNotFoundException("No user information available");
+        }
+        return users;
+    }
+
+
+    public boolean isEmpty(User[] arr) { // defining the parameter of a string array to be included when executing this method
+        for (User element : arr) { // enhanced for each loop, that iterates through the arrays elements returning & assigning the value to the declared variable flight
+            if (element != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class ConnectionFactory {
 
     private ConnectionFactory() {
         try {
-            properties.load(new FileReader("src/main/resources/database.properties"));
+            properties.load(new FileReader("src/main/java/resources/database.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,7 +36,7 @@ public class ConnectionFactory {
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(properties.getProperty("url"),
-                    properties.getProperty("user"),
+                    properties.getProperty("username"),
                     properties.getProperty("password")
             );
         } catch (SQLException e) {

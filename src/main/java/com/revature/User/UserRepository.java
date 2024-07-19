@@ -53,7 +53,7 @@ public class UserRepository implements Crudable<User> {
 
             user.setUserId(resultSet.getInt("user_id"));
             user.setUsername(resultSet.getString("username"));
-            user.setPassword(resultSet.getString("password"));
+            user.setPassword(resultSet.getString("pass"));
             user.setFirstName(resultSet.getString("first_name"));
             user.setLastName(resultSet.getString("last_name"));
 
@@ -66,7 +66,7 @@ public class UserRepository implements Crudable<User> {
     }
 
     public User findByUsernameAndPassword(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND pass = ?";
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
 
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -77,7 +77,7 @@ public class UserRepository implements Crudable<User> {
                 User user = new User();
                 user.setUserId(resultSet.getInt("user_id"));
                 user.setUsername(resultSet.getString("username"));
-                user.setPassword(resultSet.getString("password"));
+                user.setPassword(resultSet.getString("pass"));
                 return user;
             }
         } catch (SQLException e) {
@@ -87,7 +87,7 @@ public class UserRepository implements Crudable<User> {
     }
 
     public void save(User user) {
-        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO users (username, pass) VALUES (?, ?)";
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
              PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, user.getUsername());
@@ -103,7 +103,7 @@ public class UserRepository implements Crudable<User> {
 
         user.setUserId(rs.getInt("user_id"));
         user.setUsername(rs.getString("username"));
-        user.setPassword(rs.getString("password"));
+        user.setPassword(rs.getString("pass"));
         user.setFirstName(rs.getString("first_name"));
         user.setLastName(rs.getString("last_name"));
 
@@ -113,7 +113,7 @@ public class UserRepository implements Crudable<User> {
     @Override
     public boolean update(User updatedUser) {
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
-            String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ? WHERE user_id = ?";
+            String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, pass = ? WHERE user_id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
             preparedStatement.setString(1, updatedUser.getFirstName());

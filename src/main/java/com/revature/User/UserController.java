@@ -22,12 +22,18 @@ public class UserController implements Controller {
         app.get("/users/{userId}", this::getUserById);
         app.put("/users", this::putUpdateUser);
         app.delete("/users", this::deleteUser);
-
     }
 
     private void getAllUsers(Context ctx) {
-        List<User> users = userService.findAll();
-        ctx.json(users);
+        try {
+            List<User> users = userService.findAll();
+            ctx.json(users);
+        } catch (DataNotFoundException e) {
+            ctx.status(404).result(e.getMessage());
+        } catch (Exception e) {
+            ctx.status(500).result("Internal Server Error");
+            e.printStackTrace(); // Log the stack trace for debugging
+        }
     }
 
     private void postNewUser(Context ctx) {

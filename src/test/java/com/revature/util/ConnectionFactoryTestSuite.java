@@ -15,4 +15,5 @@ public class ConnectionFactoryTestSuite {
             throw new RuntimeException(e);
         }
     }
+
 }
