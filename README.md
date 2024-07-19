@@ -22,4 +22,4 @@ As a user I can:
 
 
 ### ER Diagram
-![](src/main/resources/ERD.png)
+![](src/main/java/resources/ERD.png)
