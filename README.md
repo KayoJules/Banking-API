@@ -21,5 +21,5 @@ As a user I can:
 -   [ ] transfer money between accounts
 
 
-
-![](src/main/resources/crs-ERD.png)
+### ER Diagram
+![](src/main/resources/ERD.png)
