@@ -1,5 +1,4 @@
 package com.revature.User;
-import com.revature.Account.Account;
 import com.revature.util.exceptions.DataNotFoundException;
 import com.revature.util.interfaces.Serviceable;
 import java.util.function.Predicate;

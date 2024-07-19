@@ -2,7 +2,6 @@ package com.revature.User;
 
 import java.sql.*;
 
-import com.revature.Account.Account;
 import com.revature.util.ConnectionFactory;
 import com.revature.util.exceptions.*;
 import com.revature.util.interfaces.Crudable;

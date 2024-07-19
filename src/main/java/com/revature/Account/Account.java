@@ -1,6 +1,7 @@
 package com.revature.Account;
 
 import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Account {
 
@@ -19,6 +20,8 @@ public class Account {
     public int getUserId() { return userId; }
     public BigDecimal getBalance() { return balance; }
     public AccountType getAccountType() { return accountType; }
+
+    @JsonIgnore
     public String getAccountTypeAsString() { return accountType != null ? accountType.name() : null; };
 
     // Setters

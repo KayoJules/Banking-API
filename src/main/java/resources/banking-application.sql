@@ -30,7 +30,7 @@ CREATE TYPE action_type AS ENUM ('DEPOSIT', 'WITHDRAWAL');
 CREATE TABLE IF NOT EXISTS transactions (
     transaction_id SERIAL PRIMARY KEY,
     account_id INT NOT NULL,
-    transaction_type action_type  NOT NULL,
+    transaction_type action_type NOT NULL,
     amount NUMERIC NOT NULL,
     timestamp TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
@@ -49,7 +49,7 @@ INSERT INTO accounts(user_id, account_type, balance) VALUES
 (1, 'SAVINGS', 3375.50),
 (2, 'CHECKING', 793.90),
 (3, 'CHECKING', 840.19),
-(4. 'SAVINGS', 9445.56),
+(4, 'SAVINGS', 9445.56),
 (3, 'SAVINGS', 2480.43),
 (4, 'CHECKING', 1480.97);
 

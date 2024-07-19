@@ -6,7 +6,9 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class AccountController implements Controller {
 
@@ -26,6 +28,9 @@ public class AccountController implements Controller {
         app.get("/accounts", this::getAllAccounts);
         app.post("/accounts", this::postNewAccount);
         app.put("/accounts", this::putUpdateAccount);
+        app.post("/accounts/{accountId}/deposit", this::deposit);
+        app.post("/accounts/{accountId}/withdraw", this::withdraw);
+        app.get("/users/{userId}/accounts", this::getAccountsByUserId);
     }
 
     private void putUpdateAccount(Context ctx) {
@@ -59,6 +64,45 @@ public class AccountController implements Controller {
         Account account = ctx.bodyAsClass(Account.class);
         ctx.json(accountService.create(account));
         ctx.status(HttpStatus.CREATED);
+    }
+
+    private void deposit(Context ctx) {
+        int accountId = Integer.parseInt(ctx.pathParam("accountId"));
+        BigDecimal amount = new BigDecimal(ctx.bodyAsClass(Map.class).get("amount").toString());
+
+
+        boolean success = accountService.deposit(accountId, amount);
+        ctx.status(200).result("Deposit successful");
+    }
+
+    private void withdraw(Context ctx) {
+        int accountId = Integer.parseInt(ctx.pathParam("accountId"));
+        BigDecimal amount = new BigDecimal(ctx.bodyAsClass(Map.class).get("amount").toString());
+
+        try {
+            boolean success = accountService.withdraw(accountId, amount);
+            if (success) {
+                ctx.status(200).result("Withdrawal successful");
+            } else {
+                ctx.status(400).result("Withdrawal failed");
+            }
+        } catch (IllegalArgumentException e) {
+            ctx.status(400).result(e.getMessage());
+        } catch (Exception e) {
+            ctx.status(500).result("Internal Server Error");
+            e.printStackTrace();
+        }
+    }
+
+    private void getAccountsByUserId(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        List<Account> accounts = accountService.getAccountsByUserId(userId);
+
+        if (accounts.isEmpty()) {
+            ctx.status(404).result("No accounts found for user with ID: " + userId);
+        } else {
+            ctx.json(accounts);
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import com.revature.util.ConnectionFactory;
 import com.revature.util.exceptions.*;
 import com.revature.util.interfaces.Crudable;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,7 @@ public class AccountRepository implements Crudable<Account> {
     public Account create(Account newAccount) {
         try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
 
-            String sql = "INSERT INTO account(user_id, account_type, balance) VALUES(?,?,?)";
+            String sql = "INSERT INTO accounts(user_id, account_type, balance) VALUES(?,?::acc_type,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setInt(1, newAccount.getUserId());
@@ -141,31 +142,29 @@ public class AccountRepository implements Crudable<Account> {
     }
 
 
-    public Account findByAccountIdAndUser(int  accountId, int userId) {
-        try(Connection conn = ConnectionFactory.getConnectionFactory().getConnection()){
-            String sql = "select * from accounts where account_id = ? and user_id = ?";
+    public List<Account> getAccountsByUserId(int userId) {
+        List<Account> accounts = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+
+            String sql = "SELECT * FROM accounts WHERE user_id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
-            preparedStatement.setInt(1, accountId);
-            preparedStatement.setInt(2, userId);
+            preparedStatement.setInt(1, userId);
+            ResultSet rs = preparedStatement.executeQuery();
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if(!resultSet.next()){
-                throw new DataNotFoundException("No account with that information found");
+            while (rs.next()) {
+                Account account = new Account();
+                account.setAccountId(rs.getInt("account_id"));
+                account.setUserId(rs.getInt("user_id"));
+                account.setBalance(rs.getBigDecimal("balance"));
+                account.setAccountType(Account.AccountType.valueOf(rs.getString("account_type")));
+                accounts.add(account);
             }
 
-            Account account = new Account();
-
-            account.setAccountId(resultSet.getInt("account_id"));
-            account.setUserId(resultSet.getInt("user_id"));
-
-            return account;
-
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
+        return accounts;
     }
 
     private Account generateUserFromResultSet(ResultSet rs) throws SQLException {
@@ -179,6 +178,63 @@ public class AccountRepository implements Crudable<Account> {
         account.setAccountType(accountTypeStr);
 
         return account;
+    }
+
+    public boolean deposit(int accountId, BigDecimal amount) {
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+
+            String sql = "UPDATE accounts SET balance = balance + ? WHERE account_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setBigDecimal(1, amount);
+            preparedStatement.setInt(2, accountId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean withdraw(int accountId, BigDecimal amount) {
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+
+            String sql = "UPDATE accounts SET balance = balance - ? WHERE account_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setBigDecimal(1, amount);
+            preparedStatement.setInt(2, accountId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public BigDecimal getBalance(int accountId) {
+        try (Connection conn = ConnectionFactory.getConnectionFactory().getConnection()) {
+
+            String sql = "SELECT balance FROM accounts WHERE account_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBigDecimal("balance");
+            } else {
+                return null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
