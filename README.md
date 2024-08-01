@@ -20,6 +20,6 @@ As a user I can:
 -   [ ] share a joint account with another user
 -   [ ] transfer money between accounts
 
+### ER Diagram
+![](src/main/java/resources/ERD.png)
 
-
-![](src/main/resources/crs-ERD.png)
